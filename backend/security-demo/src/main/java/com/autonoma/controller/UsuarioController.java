@@ -51,13 +51,14 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{id}/reset")
     public ResponseEntity<UsuarioResponse> restablecerContraseña(@PathVariable Integer id){
         UsuarioResponse response = usuarioService.restablecerContraseña(id);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/desactivar")
-    public ResponseEntity<UsuarioResponse> desactivarUsuario(@PathVariable Integer id) {
+    public ResponseEntity<UsuarioResponse> deactivateUserById(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.desactivarUsuario(id));
     }
 
