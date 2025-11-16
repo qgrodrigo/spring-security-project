@@ -1,0 +1,32 @@
+CREATE DATABASE IF NOT EXISTS security_db
+
+USE security_db;
+
+CREATE TABLE rol (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE personal (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL CHECK (nombre REGEXP '^[a-zA-Z]+$'),
+    apellido_paterno VARCHAR(50) NOT NULL CHECK (apellido_paterno REGEXP '^[a-zA-Z]+$'),
+    apellido_materno VARCHAR(50) NOT NULL CHECK (apellido_materno REGEXP '^[a-zA-Z]+$'),
+    dni CHAR(8) NOT NULL UNIQUE CHECK (dni REGEXP '^[0-9]{8}$'),
+    celular CHAR(9) NOT NULL UNIQUE CHECK (celular REGEXP '^[0-9]{9}$'),
+    correo VARCHAR(100) NOT NULL UNIQUE CHECK (correo REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+    urlimg TEXT NOT NULL,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    idpersonal INT NOT NULL UNIQUE,
+    idrol INT NOT NULL,
+    usuario VARCHAR(100) NOT NULL UNIQUE CHECK (usuario REGEXP '^[A-Za-z0-9_]{4,}$'),
+    contraseña VARCHAR(255) NOT NULL CHECK (CHAR_LENGTH(contraseña) >= 8),
+    estado ENUM('Activo', 'Desactivo') NOT NULL DEFAULT 'Activo',
+    CONSTRAINT fk_usuario_personal FOREIGN KEY (idpersonal) REFERENCES personal(id) ON DELETE CASCADE,
+    CONSTRAINT fk_usuario_rol FOREIGN KEY (idrol) REFERENCES rol(id) ON DELETE CASCADE
+);
+
