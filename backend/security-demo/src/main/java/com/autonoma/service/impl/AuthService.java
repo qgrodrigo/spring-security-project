@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
+    /**
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository usuarioRepository;
 
@@ -36,5 +36,5 @@ public class AuthService {
                 usuario.getRol().getNombre(),
                 usuario.getEstado().name()
         );
-    }
+    } **/
 }

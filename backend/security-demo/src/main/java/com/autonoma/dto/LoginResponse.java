@@ -1,7 +1,11 @@
 package com.autonoma.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+
 public record LoginResponse(
-        String usuario,
-        String rol,
-        String estado
+        String token,
+        String username,
+        String message
 ) {}
