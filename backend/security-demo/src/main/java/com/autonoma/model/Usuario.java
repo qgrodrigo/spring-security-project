@@ -34,6 +34,7 @@ public class Usuario {
     @Column(nullable = false)
     private Estado estado;
 
+
     public enum Estado {
         Activo, Desactivo
     }

@@ -1,7 +1,7 @@
 package com.autonoma.service.impl;
 
-import com.autonoma.dto.RolRequest;
-import com.autonoma.dto.RolResponse;
+import com.autonoma.dto.request.RolRequest;
+import com.autonoma.dto.response.RolResponse;
 import com.autonoma.model.Rol;
 import com.autonoma.repository.RolRepository;
 import com.autonoma.service.RolService;

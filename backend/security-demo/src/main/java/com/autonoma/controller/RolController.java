@@ -1,8 +1,8 @@
 package com.autonoma.controller;
 
 
-import com.autonoma.dto.RolRequest;
-import com.autonoma.dto.RolResponse;
+import com.autonoma.dto.request.RolRequest;
+import com.autonoma.dto.response.RolResponse;
 import com.autonoma.service.RolService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

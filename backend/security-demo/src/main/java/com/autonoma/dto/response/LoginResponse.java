@@ -1,7 +1,4 @@
-package com.autonoma.dto;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
+package com.autonoma.dto.response;
 
 
 public record LoginResponse(

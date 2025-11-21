@@ -1,8 +1,7 @@
 package com.autonoma.service;
 
-import com.autonoma.dto.PersonalRequest;
-import com.autonoma.dto.PersonalResponse;
-import com.autonoma.model.Personal;
+import com.autonoma.dto.request.PersonalRequest;
+import com.autonoma.dto.response.PersonalResponse;
 
 import java.util.List;
 

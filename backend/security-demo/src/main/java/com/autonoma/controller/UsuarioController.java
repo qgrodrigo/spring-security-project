@@ -1,7 +1,7 @@
 package com.autonoma.controller;
 
-import com.autonoma.dto.UsuarioRequest;
-import com.autonoma.dto.UsuarioResponse;
+import com.autonoma.dto.request.UsuarioRequest;
+import com.autonoma.dto.response.UsuarioResponse;
 import com.autonoma.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

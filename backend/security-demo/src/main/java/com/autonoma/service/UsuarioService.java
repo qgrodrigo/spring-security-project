@@ -1,7 +1,7 @@
 package com.autonoma.service;
 
-import com.autonoma.dto.UsuarioRequest;
-import com.autonoma.dto.UsuarioResponse;
+import com.autonoma.dto.request.UsuarioRequest;
+import com.autonoma.dto.response.UsuarioResponse;
 
 import java.util.List;
 

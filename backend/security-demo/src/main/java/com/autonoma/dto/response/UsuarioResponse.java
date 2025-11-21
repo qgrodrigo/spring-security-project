@@ -1,4 +1,4 @@
-package com.autonoma.dto;
+package com.autonoma.dto.response;
 
 public record UsuarioResponse(
         Integer id,

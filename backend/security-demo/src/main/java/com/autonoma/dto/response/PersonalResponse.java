@@ -1,4 +1,4 @@
-package com.autonoma.dto;
+package com.autonoma.dto.response;
 
 import java.time.LocalDateTime;
 

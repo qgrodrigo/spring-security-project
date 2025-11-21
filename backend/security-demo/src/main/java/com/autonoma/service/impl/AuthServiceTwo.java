@@ -1,7 +1,7 @@
 package com.autonoma.service.impl;
 
-import com.autonoma.dto.LoginRequest;
-import com.autonoma.dto.LoginResponse;
+import com.autonoma.dto.request.LoginRequest;
+import com.autonoma.dto.response.LoginResponse;
 import com.autonoma.model.Usuario;
 import com.autonoma.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;

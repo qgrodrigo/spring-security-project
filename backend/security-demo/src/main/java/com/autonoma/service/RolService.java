@@ -1,7 +1,7 @@
 package com.autonoma.service;
 
-import com.autonoma.dto.RolRequest;
-import com.autonoma.dto.RolResponse;
+import com.autonoma.dto.request.RolRequest;
+import com.autonoma.dto.response.RolResponse;
 
 import java.util.List;
 
