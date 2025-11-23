@@ -52,11 +52,12 @@ public class WebSecurityConfig {
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                                 .requestMatchers("api/v1/test/**").permitAll()
                                 .requestMatchers("api/v1/login").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/v1/usuarios").hasAnyRole("ADMIN", "USER")
-                                .requestMatchers(HttpMethod.DELETE,"/api/v1/usuarios").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/v1/personals").hasAnyRole("ADMIN", "USER")
-                                .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").hasRole("ADMIN")
+                                .requestMatchers("api/v1/productos/**").permitAll()
+                                .requestMatchers("api/v1/movimientos/**").permitAll()
+                                .requestMatchers("api/v1/usuarios/**").permitAll()
+                                .requestMatchers("api/v1/personals/**").permitAll()
+                                .requestMatchers("api/v1/roles/**").permitAll()
+
                  .anyRequest().authenticated()
                  )
                 .sessionManagement(session -> session

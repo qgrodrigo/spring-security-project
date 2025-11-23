@@ -2,7 +2,7 @@ package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.PersonalRequest;
 import com.autonoma.dto.response.PersonalResponse;
-import com.autonoma.model.Personal;
+import com.autonoma.model.entity.Personal;
 import com.autonoma.repository.PersonalRepository;
 import com.autonoma.service.PersonalService;
 import lombok.RequiredArgsConstructor;

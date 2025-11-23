@@ -2,9 +2,10 @@ package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.UsuarioRequest;
 import com.autonoma.dto.response.UsuarioResponse;
-import com.autonoma.model.Personal;
-import com.autonoma.model.Rol;
-import com.autonoma.model.Usuario;
+import com.autonoma.model.entity.Personal;
+import com.autonoma.model.entity.Rol;
+import com.autonoma.model.entity.Usuario;
+import com.autonoma.model.enums.Estado;
 import com.autonoma.repository.PersonalRepository;
 import com.autonoma.repository.RolRepository;
 import com.autonoma.repository.UsuarioRepository;
@@ -90,7 +91,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        usuario.setEstado(Usuario.Estado.Desactivo);
+        usuario.setEstado(Estado.INACTIVO);
         usuarioRepository.save(usuario);
 
         return mapToResponse(usuario);
@@ -108,7 +109,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setRol(rol);
         usuario.setUsuario(generarUsuario(personal));
         usuario.setContraseña(passwordEncoder.encode(generarContraseña(personal)));
-        usuario.setEstado(Usuario.Estado.Activo);
+        usuario.setEstado(Estado.ACTIVO);
 
         return usuario;
     }

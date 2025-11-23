@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/personals")
 @RequiredArgsConstructor
-@PreAuthorize("denyAll()")
 public class PersonalController {
 
     private final PersonalService personalService;

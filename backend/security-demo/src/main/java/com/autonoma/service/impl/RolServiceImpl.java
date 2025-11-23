@@ -2,7 +2,7 @@ package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.RolRequest;
 import com.autonoma.dto.response.RolResponse;
-import com.autonoma.model.Rol;
+import com.autonoma.model.entity.Rol;
 import com.autonoma.repository.RolRepository;
 import com.autonoma.service.RolService;
 import lombok.RequiredArgsConstructor;

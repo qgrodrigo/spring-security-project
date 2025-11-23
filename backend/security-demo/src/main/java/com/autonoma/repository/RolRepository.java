@@ -1,6 +1,6 @@
 package com.autonoma.repository;
 
-import com.autonoma.model.Rol;
+import com.autonoma.model.entity.Rol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

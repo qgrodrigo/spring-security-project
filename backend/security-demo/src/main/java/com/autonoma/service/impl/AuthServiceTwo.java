@@ -2,7 +2,7 @@ package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.LoginRequest;
 import com.autonoma.dto.response.LoginResponse;
-import com.autonoma.model.Usuario;
+import com.autonoma.model.entity.Usuario;
 import com.autonoma.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

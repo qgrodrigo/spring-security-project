@@ -14,19 +14,16 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/usuarios")
-@PreAuthorize("denyAll()")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
 
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<UsuarioResponse>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    @PreAuthorize("hasRole('Admin')")
     @PostMapping
     public ResponseEntity<UsuarioResponse> saveUsuario(@RequestBody @Valid UsuarioRequest request) {
         return ResponseEntity.ok(usuarioService.save(request));
@@ -39,12 +36,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioResponse> findUsuarioById(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.findById(id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Integer id) {
         usuarioService.delete(id);

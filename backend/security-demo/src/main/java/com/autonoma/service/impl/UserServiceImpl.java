@@ -1,6 +1,6 @@
 package com.autonoma.service.impl;
 
-import com.autonoma.model.Usuario;
+import com.autonoma.model.entity.Usuario;
 import com.autonoma.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;

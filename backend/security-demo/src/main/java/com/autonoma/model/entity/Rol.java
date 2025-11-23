@@ -1,4 +1,4 @@
-package com.autonoma.model;
+package com.autonoma.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

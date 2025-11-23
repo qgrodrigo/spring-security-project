@@ -2,13 +2,13 @@ package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.ProductoRequest;
 import com.autonoma.dto.response.ProductoResponse;
-import com.autonoma.model.Producto;
+import com.autonoma.model.entity.Producto;
 import com.autonoma.repository.ProductoRepository;
 import com.autonoma.service.ProductoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -55,22 +55,28 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     private Producto mapToEntity(ProductoRequest request) {
-        Producto Producto = new Producto();
-        Producto.setNombre(request.nombre());
-        return Producto;
+        Producto producto = new Producto();
+
+        producto.setNombre(request.nombre());
+        producto.setStock(request.stock());
+        producto.setColor(request.color());
+        producto.setTalla(request.talla());
+        producto.setUrlImg(request.urlImg());
+
+        return producto;
     }
 
     private ProductoResponse mapToResponse(Producto producto) {
-
-        final SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return new ProductoResponse(
                 producto.getId(),
                 producto.getNombre(),
                 producto.getStock(),
                 producto.getColor(),
                 producto.getTalla(),
-                formato.format(producto.getFechaCreacion()),
-                producto.getUrlImg() );
-
+                producto.getFechaCreacion().format(formatter),
+                producto.getUrlImg()
+        );
     }
+
 }

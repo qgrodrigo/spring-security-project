@@ -1,11 +1,10 @@
 package com.autonoma.repository;
 
-import com.autonoma.model.entity.Usuario;
+import com.autonoma.model.entity.Movimiento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
+public interface MovimientoRepository extends JpaRepository<Movimiento, Integer> {
 
-    Usuario findByUsuario(String usuario);
 }
