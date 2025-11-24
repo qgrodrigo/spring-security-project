@@ -5,6 +5,7 @@ import com.autonoma.dto.response.MovimientoResponse;
 import com.autonoma.model.entity.Movimiento;
 import com.autonoma.model.entity.Producto;
 import com.autonoma.model.entity.Usuario;
+import com.autonoma.model.enums.TipoMovimiento;
 import com.autonoma.repository.MovimientoRepository;
 import com.autonoma.repository.ProductoRepository;
 import com.autonoma.repository.UsuarioRepository;
@@ -25,6 +26,16 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Override
     public MovimientoResponse save(MovimientoRequest request) {
+
+        Producto producto = productoRepository.findById(request.idProducto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        if (request.tipoMovimiento() == TipoMovimiento.ENTRADA) {
+            producto.setStock(producto.getStock() + request.cantidad());
+        } else {
+            producto.setStock(producto.getStock() - request.cantidad());
+        }
+
         Movimiento movimiento = mapToEntity(request);
         Movimiento saved = movimientoRepository.save(movimiento);
         return mapToResponse(saved);
