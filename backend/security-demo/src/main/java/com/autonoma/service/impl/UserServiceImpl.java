@@ -1,6 +1,7 @@
 package com.autonoma.service.impl;
 
 import com.autonoma.model.entity.Usuario;
+import com.autonoma.model.enums.Estado;
 import com.autonoma.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -21,6 +22,10 @@ public class UserServiceImpl implements UserDetailsService {
 
         if (user == null) {
             throw new UsernameNotFoundException("Usuario no encontrado: " + username);
+        }
+
+        if (user.getEstado() != Estado.ACTIVO){
+            throw new UsernameNotFoundException("Usuario inactivo");
         }
 
         return User.builder()

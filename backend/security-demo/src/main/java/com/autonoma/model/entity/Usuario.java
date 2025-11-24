@@ -35,5 +35,4 @@ public class Usuario {
     @Column(nullable = false)
     private Estado estado;
 
-
 }
