@@ -3,8 +3,10 @@ package com.autonoma.service.impl;
 import com.autonoma.dto.request.PersonalRequest;
 import com.autonoma.dto.response.PersonalResponse;
 import com.autonoma.model.entity.Personal;
+import com.autonoma.model.enums.Estado;
 import com.autonoma.repository.PersonalRepository;
 import com.autonoma.service.PersonalService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class PersonalServiceImpl implements PersonalService {
     @Override
     public PersonalResponse save(PersonalRequest request) {
         Personal personal = mapToEntity(request);
+        personal.setEstado(Estado.ACTIVO);
         Personal personalSaved = personalRepository.save(personal);
 
         return mapToResponse(personalSaved);
@@ -56,9 +59,24 @@ public class PersonalServiceImpl implements PersonalService {
         return mapToResponse(personal);
     }
 
+    /**
     @Override
     public void delete(Integer id) {
         personalRepository.deleteById(id);
+    }
+
+    **/
+
+    @Transactional
+    public void delete(Integer id) {
+        Personal personal = personalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
+
+        personal.setEstado(Estado.INACTIVO);
+
+        //personal.setFechaEliminacion(LocalDateTime.now());
+
+        personalRepository.save(personal);
     }
 
     private Personal mapToEntity(PersonalRequest request) {
@@ -83,6 +101,7 @@ public class PersonalServiceImpl implements PersonalService {
                 personal.getCelular(),
                 personal.getCorreo(),
                 personal.getUrlimg(),
+                personal.getEstado().name(),
                 personal.getFechacreacion()
         );
     }

@@ -1,5 +1,6 @@
 package com.autonoma.model.entity;
 
+import com.autonoma.model.enums.Estado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +36,10 @@ public class Personal {
     private String correo;
 
     private String urlimg;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Estado estado;
 
     @Column(name = "fecha_creacion", updatable = false)
     private LocalDateTime fechacreacion;

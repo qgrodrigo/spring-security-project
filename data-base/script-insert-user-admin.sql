@@ -10,6 +10,7 @@ INSERT INTO personal (
     celular,
     correo,
     urlimg,
+    estado,
     fecha_creacion
 ) VALUES (
     'Rodrigo',
@@ -19,6 +20,7 @@ INSERT INTO personal (
     '987654321',
     'rodrigo@example.com',
     'https://example.com/img/rodrigo.jpg',
+    'ACTIVO',
     NOW()
 );
 
@@ -40,6 +42,8 @@ VALUES (
     '$2a$12$UN7rgFfNo34bjyWOMs532.2Qf/CzrJ/EjyobSztsVvrWV47CV3uEq', -- BCrypt hash de "Admin123"
     'ACTIVO'
 );
+
+SELECT * FROM personal;
 
 SELECT * FROM usuario
 Select * from usuario;

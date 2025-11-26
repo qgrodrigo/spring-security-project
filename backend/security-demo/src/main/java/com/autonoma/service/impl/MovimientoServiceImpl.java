@@ -11,6 +11,7 @@ import com.autonoma.repository.ProductoRepository;
 import com.autonoma.repository.UsuarioRepository;
 import com.autonoma.service.MovimientoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -43,11 +44,14 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Override
     public MovimientoResponse update(Integer id, MovimientoRequest request) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByUsuario(username);
+
         Movimiento movimiento = movimientoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Movimiento no encontrado"));
 
-        Usuario usuario = usuarioRepository.findById(request.idUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         Producto producto = productoRepository.findById(request.idProducto())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
@@ -81,8 +85,12 @@ public class MovimientoServiceImpl implements MovimientoService {
     }
 
     private Movimiento mapToEntity(MovimientoRequest request) {
-        Usuario usuario = usuarioRepository.findById(request.idUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByUsuario(username); // o findByUsername
+
+        //Usuario usuario = usuarioRepository.findById(request.idUsuario())
+        //        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         Producto producto = productoRepository.findById(request.idProducto())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
