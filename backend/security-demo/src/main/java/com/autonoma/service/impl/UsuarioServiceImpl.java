@@ -111,10 +111,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         usuarioRepository.save(usuario);
 
+        /*
         if(usuario.getEstado() != Estado.ACTIVO)
         {
             usuario.setEstado(Estado.ACTIVO);
-        }
+        }*/
         return mapToResponse(usuario);
     }
 
@@ -124,9 +125,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-
-        Personal personal = new Personal();
-        personalRepository.findById(usuario.getId());
+        Personal personal = personalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
 
         UserResponse response = new UserResponse(usuario.getUsuario(), generarContraseña(personal));
 

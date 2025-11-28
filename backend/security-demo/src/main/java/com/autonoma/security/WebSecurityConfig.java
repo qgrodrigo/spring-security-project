@@ -61,4 +61,17 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:8081"); // tu frontend
+        configuration.addAllowedMethod("*"); // GET, POST, PUT, DELETE, OPTIONS
+        configuration.addAllowedHeader("*"); // todas las cabeceras
+        configuration.setAllowCredentials(true); // si usas cookies o Authorization header
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

@@ -58,7 +58,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.activarUsuario(id));
     }
 
-    @GetMapping("/{id}/show")
+    @GetMapping("/show/{id}")
     public ResponseEntity<UserResponse> mostrarUserPassword(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.showUsuario(id));
     }
