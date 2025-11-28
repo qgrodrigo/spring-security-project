@@ -29,12 +29,15 @@ public class Personal {
     @Column(name = "apellido_materno")
     private String apellidoMaterno;
 
+    @Column(unique = true)
     private String dni;
 
     private String celular;
 
+    @Column(unique = true)
     private String correo;
 
+    @Column(unique = true)
     private String urlimg;
 
     @Enumerated(EnumType.STRING)
