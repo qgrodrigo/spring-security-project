@@ -1,6 +1,7 @@
 package com.autonoma.controller;
 
 import com.autonoma.dto.request.UsuarioRequest;
+import com.autonoma.dto.response.UserResponse;
 import com.autonoma.dto.response.UsuarioResponse;
 import com.autonoma.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -50,6 +51,16 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponse> restablecerContraseña(@PathVariable Integer id){
         UsuarioResponse response = usuarioService.restablecerContraseña(id);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<UsuarioResponse> activateUserById(@PathVariable Integer id) {
+        return ResponseEntity.ok(usuarioService.activarUsuario(id));
+    }
+
+    @GetMapping("/{id}/show")
+    public ResponseEntity<UserResponse> mostrarUserPassword(@PathVariable Integer id) {
+        return ResponseEntity.ok(usuarioService.showUsuario(id));
     }
 
     @PatchMapping("/{id}/desactivar")

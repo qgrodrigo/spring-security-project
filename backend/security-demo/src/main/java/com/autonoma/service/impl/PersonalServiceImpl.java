@@ -3,11 +3,16 @@ package com.autonoma.service.impl;
 import com.autonoma.dto.request.PersonalRequest;
 import com.autonoma.dto.response.PersonalResponse;
 import com.autonoma.model.entity.Personal;
+import com.autonoma.model.entity.Usuario;
 import com.autonoma.model.enums.Estado;
 import com.autonoma.repository.PersonalRepository;
+import com.autonoma.repository.RolRepository;
+import com.autonoma.repository.UsuarioRepository;
 import com.autonoma.service.PersonalService;
+import com.autonoma.service.UsuarioService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +22,26 @@ import java.util.List;
 public class PersonalServiceImpl implements PersonalService {
 
     private final PersonalRepository personalRepository;
-
+    private final RolRepository rolRepository;
+    private final UsuarioHelperService usuarioHelperService;
+    private final PasswordEncoder passwordEncoder;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     public PersonalResponse save(PersonalRequest request) {
         Personal personal = mapToEntity(request);
         personal.setEstado(Estado.ACTIVO);
         Personal personalSaved = personalRepository.save(personal);
+
+
+        Usuario usuario = new Usuario();
+        usuario.setPersonal(personal);
+        usuario.setRol(rolRepository.findByNombre("BASIC"));
+        usuario.setUsuario(usuarioHelperService.generarUsuario(personal));
+        usuario.setContraseña(passwordEncoder.encode( usuarioHelperService.generarContraseña(personal)));
+        usuario.setEstado(Estado.INACTIVO);
+
+        usuarioRepository.save(usuario);
 
         return mapToResponse(personalSaved);
     }

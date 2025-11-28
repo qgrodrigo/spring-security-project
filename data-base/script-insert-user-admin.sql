@@ -31,9 +31,18 @@ VALUES (
 
 INSERT INTO rol (nombre) 
 VALUES (
-'USER'
+'GERENTE'
 );
 
+INSERT INTO rol (nombre) 
+VALUES (
+'ALMACEN'
+);
+
+INSERT INTO rol (nombre) 
+VALUES (
+'BASIC'
+);
 INSERT INTO usuario (idpersonal, idrol, usuario, contraseña, estado)
 VALUES (
     1, -- id de un registro válido en la tabla personal

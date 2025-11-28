@@ -1,6 +1,7 @@
 package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.UsuarioRequest;
+import com.autonoma.dto.response.UserResponse;
 import com.autonoma.dto.response.UsuarioResponse;
 import com.autonoma.model.entity.Personal;
 import com.autonoma.model.entity.Rol;
@@ -29,7 +30,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponse save(UsuarioRequest request) {
         Usuario usuario = mapToEntity(request);
+
         Usuario saved = usuarioRepository.save(usuario);
+
         return mapToResponse(saved);
     }
 
@@ -91,10 +94,43 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        usuario.setEstado(Estado.INACTIVO);
+        if (usuario.getEstado() != Estado.INACTIVO){
+            usuario.setEstado(Estado.INACTIVO);
+        }
+
         usuarioRepository.save(usuario);
 
         return mapToResponse(usuario);
+    }
+
+    @Override
+    public UsuarioResponse activarUsuario(Integer id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+
+        usuarioRepository.save(usuario);
+
+        if(usuario.getEstado() != Estado.ACTIVO)
+        {
+            usuario.setEstado(Estado.ACTIVO);
+        }
+        return mapToResponse(usuario);
+    }
+
+    @Override
+    public UserResponse showUsuario(Integer id) {
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+
+        Personal personal = new Personal();
+        personalRepository.findById(usuario.getId());
+
+        UserResponse response = new UserResponse(usuario.getUsuario(), generarContraseña(personal));
+
+        return response;
     }
 
     private Usuario mapToEntity(UsuarioRequest request) {
@@ -123,30 +159,29 @@ public class UsuarioServiceImpl implements UsuarioService {
                 usuario.getUsuario(),
                 p.getCorreo(),
                 usuario.getRol().getNombre(),
-                usuario.getEstado().name(),
-                usuario.getContraseña(),
-                nombreCompleto
+                usuario.getEstado().name()
+                //nombreCompleto
         );
     }
 
     // generate automatic user
-    private String generarUsuario(Personal p) {
-        String inicialNombre = p.getNombre().substring(0, 1).toUpperCase();
-        String apellido = p.getApellidoPaterno().toLowerCase();
-        return inicialNombre + apellido;
-    }
+        public String generarUsuario(Personal p) {
+            String inicialNombre = p.getNombre().substring(0, 1).toUpperCase();
+            String apellido = p.getApellidoPaterno().toLowerCase();
+            return inicialNombre + apellido;
+        }
 
-    // generate automatic password
-    private String generarContraseña(Personal p) {
-        String inicialApellido = p.getApellidoPaterno().substring(0, 1).toUpperCase();
-        String dni = p.getDni();
-        String celular = p.getCelular();
-        String inicialNombre = p.getNombre().substring(0, 1).toUpperCase();
+        // generate automatic password
+        public String generarContraseña(Personal p) {
+            String inicialApellido = p.getApellidoPaterno().substring(0, 1).toUpperCase();
+            String dni = p.getDni();
+            String celular = p.getCelular();
+            String inicialNombre = p.getNombre().substring(0, 1).toUpperCase();
 
-        return inicialApellido +
-                dni.substring(0, 3) +
-                celular.substring(celular.length() - 3) +
-                inicialNombre;
+            return inicialApellido +
+                    dni.substring(0, 3) +
+                    celular.substring(celular.length() - 3) +
+                    inicialNombre;
     }
 
 }

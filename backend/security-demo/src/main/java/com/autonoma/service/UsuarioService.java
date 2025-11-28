@@ -1,6 +1,7 @@
 package com.autonoma.service;
 
 import com.autonoma.dto.request.UsuarioRequest;
+import com.autonoma.dto.response.UserResponse;
 import com.autonoma.dto.response.UsuarioResponse;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface UsuarioService {
     void delete(Integer id);
     UsuarioResponse restablecerContraseña(Integer id);
     UsuarioResponse desactivarUsuario(Integer id);
+    UsuarioResponse activarUsuario(Integer id);
+    UserResponse showUsuario(Integer id);
 }

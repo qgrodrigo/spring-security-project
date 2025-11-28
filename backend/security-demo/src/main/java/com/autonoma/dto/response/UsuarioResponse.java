@@ -5,7 +5,6 @@ public record UsuarioResponse(
         String usuario,
         String correo,
         String rol,
-        String estado,
-        String contraseña,
-        String nombreCompleto
+        String estado
+        //String nombreCompleto
 ) {}
