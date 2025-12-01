@@ -1,6 +1,8 @@
 package com.autonoma.service;
 
+import com.autonoma.dto.request.UpdateRolRequest;
 import com.autonoma.dto.request.UsuarioRequest;
+import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.UserResponse;
 import com.autonoma.dto.response.UsuarioResponse;
 
@@ -14,7 +16,9 @@ public interface UsuarioService {
     UsuarioResponse findById(Integer id);
     void delete(Integer id);
     UsuarioResponse restablecerContraseña(Integer id);
-    UsuarioResponse desactivarUsuario(Integer id);
-    UsuarioResponse activarUsuario(Integer id);
+    MessageResponse activarUsuario(Integer id);
+    MessageResponse desactivarUsuario(Integer id);
     UserResponse showUsuario(Integer id);
+
+    MessageResponse cambiarRol(Integer idPersonal, UpdateRolRequest request);
 }

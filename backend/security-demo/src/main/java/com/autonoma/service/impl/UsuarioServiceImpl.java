@@ -1,8 +1,12 @@
 package com.autonoma.service.impl;
 
+import com.autonoma.dto.request.UpdateRolRequest;
+import com.autonoma.dto.request.UpdateUsuarioRequest;
 import com.autonoma.dto.request.UsuarioRequest;
+import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.UserResponse;
 import com.autonoma.dto.response.UsuarioResponse;
+import com.autonoma.exception.ResourceNotFoundException;
 import com.autonoma.model.entity.Personal;
 import com.autonoma.model.entity.Rol;
 import com.autonoma.model.entity.Usuario;
@@ -90,9 +94,27 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioResponse desactivarUsuario(Integer id) {
+    public MessageResponse activarUsuario(Integer id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no existe."));
+
+
+        if(usuario.getEstado() != Estado.ACTIVO)
+        {
+            usuario.setEstado(Estado.ACTIVO);
+        }
+
+        usuarioRepository.save(usuario);
+
+        MessageResponse messageResponse = new MessageResponse("EXITO: Usuario activado.");
+
+        return messageResponse;
+    }
+
+    @Override
+    public MessageResponse desactivarUsuario(Integer id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no existe"));
 
         if (usuario.getEstado() != Estado.INACTIVO){
             usuario.setEstado(Estado.INACTIVO);
@@ -100,22 +122,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         usuarioRepository.save(usuario);
 
-        return mapToResponse(usuario);
-    }
+        MessageResponse messageResponse = new MessageResponse("EXITO: Usuario desactivado.");
 
-    @Override
-    public UsuarioResponse activarUsuario(Integer id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-
-        usuarioRepository.save(usuario);
-
-        if(usuario.getEstado() != Estado.ACTIVO)
-        {
-            usuario.setEstado(Estado.ACTIVO);
-        }
-        return mapToResponse(usuario);
+        return messageResponse;
     }
 
     @Override
@@ -133,9 +142,30 @@ public class UsuarioServiceImpl implements UsuarioService {
         return response;
     }
 
+    @Override
+    public MessageResponse cambiarRol(Integer idPersonal, UpdateRolRequest request) {
+
+        Personal personal = personalRepository.findById(idPersonal)
+                .orElseThrow(() -> new ResourceNotFoundException("Personal no existe."));
+
+        Usuario usuario = usuarioRepository.findById(idPersonal)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
+
+        Rol rol = rolRepository.findById(request.idRol())
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no existe."));
+
+
+
+        usuario.setRol(rol);
+        Usuario updated = usuarioRepository.save(usuario);
+
+        MessageResponse message = new MessageResponse("EXITO: Rol actualizado.");
+        return message;
+    }
+
     private Usuario mapToEntity(UsuarioRequest request) {
         Personal personal = personalRepository.findById(request.idPersonal())
-                .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Personal no existe."));
 
         Rol rol = rolRepository.findById(request.idRol())
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));

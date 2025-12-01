@@ -2,7 +2,12 @@ package com.autonoma.controller;
 
 import com.autonoma.dto.request.LoginRequest;
 import com.autonoma.dto.response.LoginResponse;
+import com.autonoma.model.entity.Personal;
+import com.autonoma.model.entity.Usuario;
+import com.autonoma.repository.PersonalRepository;
+import com.autonoma.repository.UsuarioRepository;
 import com.autonoma.security.JwtService;
+import com.autonoma.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +37,6 @@ public class AuthController {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
         String token = jwtService.generateToken(user);
-
 
         return ResponseEntity.ok(new LoginResponse(token, jwtService.getExpirationMinutes()));
     }

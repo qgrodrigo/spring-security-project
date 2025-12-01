@@ -55,4 +55,5 @@ VALUES (
 SELECT * FROM personal;
 
 SELECT * FROM usuario
-Select * from usuario;
+-- SELECT * FROM rol
+-- Select * from usuario;

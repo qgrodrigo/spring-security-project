@@ -1,6 +1,7 @@
 package com.autonoma.controller;
 
 import com.autonoma.dto.request.PersonalRequest;
+import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.PersonalResponse;
 import com.autonoma.service.PersonalService;
 import jakarta.validation.Valid;
@@ -22,16 +23,17 @@ public class PersonalController {
     public ResponseEntity<List<PersonalResponse>> getAllPersonal(){
         return ResponseEntity.ok(personalService.findAll());
     }
-
     @PostMapping
-    public ResponseEntity<PersonalResponse> savePersonal(@RequestBody @Valid PersonalRequest request) {
-        return ResponseEntity.ok(personalService.save(request));
+    public ResponseEntity<MessageResponse> savePersonal(@RequestBody @Valid PersonalRequest request) {
+        MessageResponse message = personalService.save(request);
+        return ResponseEntity.ok(message);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonalResponse> updatePersonal(@PathVariable Integer id,
+    public ResponseEntity<MessageResponse> updatePersonal(@PathVariable Integer id,
                                                        @RequestBody @Valid PersonalRequest request) {
-        return ResponseEntity.ok(personalService.update(id, request));
+        MessageResponse message = personalService.update(id, request);
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping("/{id}")

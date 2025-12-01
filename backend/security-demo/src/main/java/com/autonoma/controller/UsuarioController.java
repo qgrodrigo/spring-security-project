@@ -1,10 +1,14 @@
 package com.autonoma.controller;
 
+import com.autonoma.dto.request.UpdateRolRequest;
 import com.autonoma.dto.request.UsuarioRequest;
+import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.UserResponse;
 import com.autonoma.dto.response.UsuarioResponse;
 import com.autonoma.service.UsuarioService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,7 +41,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponse> findUsuarioById(@PathVariable Integer id) {
+    public ResponseEntity<UsuarioResponse> findUsuarioById(@PathVariable @NotNull @Positive Integer id) {
         return ResponseEntity.ok(usuarioService.findById(id));
     }
 
@@ -48,14 +52,17 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/reset")
-    public ResponseEntity<UsuarioResponse> restablecerContraseña(@PathVariable Integer id){
+    public ResponseEntity<UsuarioResponse> restablecerContraseña(@PathVariable @NotNull @Positive Integer id){
         UsuarioResponse response = usuarioService.restablecerContraseña(id);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/activar")
-    public ResponseEntity<UsuarioResponse> activateUserById(@PathVariable Integer id) {
-        return ResponseEntity.ok(usuarioService.activarUsuario(id));
+    public ResponseEntity<MessageResponse> activateUserById(@PathVariable @NotNull @Positive Integer id) {
+
+        MessageResponse messageResponse = usuarioService.activarUsuario(id);
+
+        return ResponseEntity.ok(messageResponse);
     }
 
     @GetMapping("/{id}/show")
@@ -64,8 +71,17 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/desactivar")
-    public ResponseEntity<UsuarioResponse> deactivateUserById(@PathVariable Integer id) {
+    public ResponseEntity<MessageResponse> deactivateUserById(@PathVariable Integer id) {
+        
         return ResponseEntity.ok(usuarioService.desactivarUsuario(id));
+    }
+
+    @PatchMapping("/{id}/rol")
+    public ResponseEntity<MessageResponse> cambiarRolUsuario(@PathVariable Integer id,
+                                                                @RequestBody @Valid UpdateRolRequest request) {
+
+        MessageResponse message = usuarioService.cambiarRol(id, request);
+        return ResponseEntity.ok(message);
     }
 
 }

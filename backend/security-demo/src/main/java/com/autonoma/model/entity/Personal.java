@@ -32,17 +32,14 @@ public class Personal {
     @Column(unique = true)
     private String dni;
 
+    @Column(unique = true)
     private String celular;
 
-    @Column(unique = true)
+    //@Column(unique = true)
     private String correo;
 
     @Column(unique = true)
     private String urlimg;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Estado estado;
 
     @Column(name = "fecha_creacion", updatable = false)
     private LocalDateTime fechacreacion;

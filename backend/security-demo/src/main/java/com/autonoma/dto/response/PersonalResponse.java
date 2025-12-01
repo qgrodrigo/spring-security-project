@@ -11,7 +11,6 @@ public record PersonalResponse(
         String celular,
         String correo,
         String urlimg,
-        String estado,
         LocalDateTime fechacreacion
 
 ) {}

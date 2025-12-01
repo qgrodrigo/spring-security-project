@@ -1,7 +1,9 @@
 package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.PersonalRequest;
+import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.PersonalResponse;
+import com.autonoma.exception.ResourceNotFoundException;
 import com.autonoma.model.entity.Personal;
 import com.autonoma.model.entity.Usuario;
 import com.autonoma.model.enums.Estado;
@@ -28,11 +30,9 @@ public class PersonalServiceImpl implements PersonalService {
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    public PersonalResponse save(PersonalRequest request) {
+    public MessageResponse save(PersonalRequest request) {
         Personal personal = mapToEntity(request);
-        personal.setEstado(Estado.ACTIVO);
         Personal personalSaved = personalRepository.save(personal);
-
 
         Usuario usuario = new Usuario();
         usuario.setPersonal(personal);
@@ -43,11 +43,13 @@ public class PersonalServiceImpl implements PersonalService {
 
         usuarioRepository.save(usuario);
 
-        return mapToResponse(personalSaved);
+        MessageResponse messageResponse = new MessageResponse("EXITO: Personal registrado correctamente.");
+        return messageResponse;
     }
 
     @Override
-    public PersonalResponse update(Integer id, PersonalRequest request) {
+    public MessageResponse update(Integer id, PersonalRequest request) {
+
         Personal personal = personalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
 
@@ -58,8 +60,19 @@ public class PersonalServiceImpl implements PersonalService {
         personal.setCelular(request.celular());
         personal.setCorreo(request.correo());
         personal.setUrlimg(request.urlimg());
+
         Personal updated = personalRepository.save(personal);
-        return mapToResponse(updated);
+
+        String mensaje;
+        if (updated != null){
+            mensaje = "EXITO: Personal actualizado correctamente.";
+        }else{
+            mensaje = "ERROR: ocurrió un error al actualizar datos del personal.";
+        }
+
+        MessageResponse messageResponse = new MessageResponse(mensaje);
+
+        return messageResponse;
     }
 
     @Override
@@ -73,7 +86,7 @@ public class PersonalServiceImpl implements PersonalService {
     @Override
     public PersonalResponse findById(Integer id) {
         Personal personal = personalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Personal no existe."));
         return mapToResponse(personal);
     }
 
@@ -90,7 +103,7 @@ public class PersonalServiceImpl implements PersonalService {
         Personal personal = personalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
 
-        personal.setEstado(Estado.INACTIVO);
+        //personal.setEstado(Estado.INACTIVO);
 
         //personal.setFechaEliminacion(LocalDateTime.now());
 
@@ -119,7 +132,7 @@ public class PersonalServiceImpl implements PersonalService {
                 personal.getCelular(),
                 personal.getCorreo(),
                 personal.getUrlimg(),
-                personal.getEstado().name(),
+                //personal.getEstado().name(),
                 personal.getFechacreacion()
         );
     }

@@ -3,19 +3,23 @@ package com.autonoma.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public record PersonalRequest(
 
         @NotBlank(message = "El nombre es obligatorio")
-        @Pattern(regexp = "^[A-Za-zÁÉÍÓÚÑáéíóúñ]+$", message = "El nombre solo debe contener letras")
+        @Size(max = 40, message = "El nombre debe tener máximo 40 caracteres")
+        @Pattern(regexp = "^[A-Za-zÁÉÍÓÚÑáéíóúñ ]+$", message = "El nombre solo debe contener letras y espacios")
         String nombre,
 
         @NotBlank(message = "El apellido paterno es obligatorio")
-        @Pattern(regexp = "^[A-Za-zÁÉÍÓÚÑáéíóúñ]+$", message = "El apellido paterno solo debe contener letras")
+        @Size(max = 40, message = "El apellido paterno debe tener máximo 40 caracteres")
+        @Pattern(regexp = "^[A-Za-zÁÉÍÓÚÑáéíóúñ ]+$", message = "El apellido paterno solo debe contener letras y espacios")
         String apellidoPaterno,
 
         @NotBlank(message = "El apellido materno es obligatorio")
-        @Pattern(regexp = "^[A-Za-zÁÉÍÓÚÑáéíóúñ]+$", message = "El apellido materno solo debe contener letras")
+        @Size(max = 40, message = "El apellido materno debe tener máximo 40 caracteres")
+        @Pattern(regexp = "^[A-Za-zÁÉÍÓÚÑáéíóúñ ]+$", message = "El apellido materno solo debe contener letras y espacios")
         String apellidoMaterno,
 
         @NotBlank(message = "El DNI es obligatorio")
@@ -28,9 +32,9 @@ public record PersonalRequest(
 
         @NotBlank(message = "El correo es obligatorio")
         @Email(message = "El correo debe tener formato válido")
-        //@Pattern(regexp = "^[\\w.-]+@gmail\\.com$", message = "El correo debe terminar en @gmail.com")
         String correo,
 
+        @Pattern(regexp = ".*\\.(png|jpg)$", message = "La imagen debe ser .png o .jpg")
         String urlimg
 ) {
 }
