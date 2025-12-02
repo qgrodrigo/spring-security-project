@@ -43,13 +43,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponse update(Integer id, UsuarioRequest request) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
+
 
         Personal personal = personalRepository.findById(request.idPersonal())
-                .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Personal no existe."));
 
         Rol rol = rolRepository.findById(request.idRol())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no existe."));
 
         usuario.setPersonal(personal);
         usuario.setRol(rol);
@@ -70,7 +71,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponse findById(Integer id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
         return mapToResponse(usuario);
     }
 
@@ -82,7 +83,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponse restablecerContraseña (Integer id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
 
         Personal personal = usuario.getPersonal();
         String nuevaClave = generarContraseña(personal);
@@ -96,8 +97,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public MessageResponse activarUsuario(Integer id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no existe."));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
 
         if(usuario.getEstado() != Estado.ACTIVO)
         {
@@ -114,7 +114,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public MessageResponse desactivarUsuario(Integer id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no existe"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
 
         if (usuario.getEstado() != Estado.INACTIVO){
             usuario.setEstado(Estado.INACTIVO);
@@ -131,8 +131,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UserResponse showUsuario(Integer id) {
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
 
         Personal personal = new Personal();
         personalRepository.findById(usuario.getId());
@@ -168,7 +167,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Personal no existe."));
 
         Rol rol = rolRepository.findById(request.idRol())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no existe."));
+
 
         Usuario usuario = new Usuario();
         usuario.setPersonal(personal);

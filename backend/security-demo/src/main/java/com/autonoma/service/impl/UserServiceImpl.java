@@ -1,5 +1,6 @@
 package com.autonoma.service.impl;
 
+import com.autonoma.exception.ResourceNotFoundException;
 import com.autonoma.model.entity.Usuario;
 import com.autonoma.model.enums.Estado;
 import com.autonoma.repository.UsuarioRepository;
@@ -18,7 +19,9 @@ public class UserServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario user = usuarioRepository.findByUsuario(username);
+
+        Usuario user = usuarioRepository.findByUsuario(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         if (user == null) {
             throw new UsernameNotFoundException("Usuario no encontrado: " + username);

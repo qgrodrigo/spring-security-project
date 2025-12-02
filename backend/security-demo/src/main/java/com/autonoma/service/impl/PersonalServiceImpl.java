@@ -51,7 +51,7 @@ public class PersonalServiceImpl implements PersonalService {
     public MessageResponse update(Integer id, PersonalRequest request) {
 
         Personal personal = personalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Personal no existe."));
 
         personal.setNombre(request.nombre());
         personal.setApellidoPaterno(request.apellidoPaterno());
@@ -90,22 +90,11 @@ public class PersonalServiceImpl implements PersonalService {
         return mapToResponse(personal);
     }
 
-    /**
-    @Override
-    public void delete(Integer id) {
-        personalRepository.deleteById(id);
-    }
-
-    **/
 
     @Transactional
     public void delete(Integer id) {
         Personal personal = personalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Personal no encontrado"));
-
-        //personal.setEstado(Estado.INACTIVO);
-
-        //personal.setFechaEliminacion(LocalDateTime.now());
 
         personalRepository.save(personal);
     }

@@ -2,6 +2,7 @@ package com.autonoma.controller;
 
 import com.autonoma.dto.request.MovimientoRequest;
 import com.autonoma.dto.request.ProductoRequest;
+import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.MovimientoResponse;
 import com.autonoma.dto.response.ProductoResponse;
 import com.autonoma.service.MovimientoService;
@@ -32,15 +33,17 @@ public class MovimientoController {
     }
 
     @PostMapping
-    public ResponseEntity<MovimientoResponse> saveMivimiento(@Valid @RequestBody MovimientoRequest request) {
+    public ResponseEntity<MessageResponse> saveMivimiento(@Valid @RequestBody MovimientoRequest request) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(movimientoService.save(request));
+        MessageResponse message = movimientoService.save(request);
+        return ResponseEntity.ok(message);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MovimientoResponse> updateProducto(@PathVariable Integer id,
+    public ResponseEntity<MessageResponse> updateProducto(@PathVariable Integer id,
                                                            @RequestBody @Valid MovimientoRequest request) {
-        return ResponseEntity.ok(movimientoService.update(id, request));
+        MessageResponse message = movimientoService.update(id, request);
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping("/{id}")

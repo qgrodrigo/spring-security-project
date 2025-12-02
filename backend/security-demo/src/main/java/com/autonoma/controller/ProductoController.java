@@ -1,6 +1,8 @@
 package com.autonoma.controller;
 
 import com.autonoma.dto.request.ProductoRequest;
+import com.autonoma.dto.request.UpdateProductoRequest;
+import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.ProductoResponse;
 import com.autonoma.service.ProductoService;
 import jakarta.validation.Valid;
@@ -31,15 +33,18 @@ public class ProductoController{
     }
 
     @PostMapping
-    public ResponseEntity<ProductoResponse> saveProducto(@Valid @RequestBody ProductoRequest request) {
+    public ResponseEntity<MessageResponse> saveProducto(@Valid @RequestBody ProductoRequest request) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(productoService.save(request));
+        MessageResponse message = productoService.save(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoResponse> updateProducto(@PathVariable Integer id,
-                                                 @RequestBody @Valid ProductoRequest request) {
-        return ResponseEntity.ok(productoService.update(id, request));
+    public ResponseEntity<MessageResponse> updateProducto(@PathVariable Integer id,
+                                                 @RequestBody @Valid UpdateProductoRequest request) {
+        MessageResponse message = productoService.update(id, request);
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping("/{id}")

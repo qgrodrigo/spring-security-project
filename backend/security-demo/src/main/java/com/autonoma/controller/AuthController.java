@@ -7,6 +7,7 @@ import com.autonoma.model.entity.Usuario;
 import com.autonoma.repository.PersonalRepository;
 import com.autonoma.repository.UsuarioRepository;
 import com.autonoma.security.JwtService;
+import com.autonoma.service.AuthService;
 import com.autonoma.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,20 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        // Authenticate user credentials
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.usuario(), request.contraseña())
-        );
-
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-
-        String token = jwtService.generateToken(user);
-
-        return ResponseEntity.ok(new LoginResponse(token, jwtService.getExpirationMinutes()));
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 }

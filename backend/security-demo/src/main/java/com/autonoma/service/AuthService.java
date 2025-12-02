@@ -1,0 +1,8 @@
+package com.autonoma.service;
+
+import com.autonoma.dto.request.LoginRequest;
+import com.autonoma.dto.response.LoginResponse;
+
+public interface AuthService {
+    LoginResponse login(LoginRequest request);
+}

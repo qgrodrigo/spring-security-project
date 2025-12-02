@@ -2,6 +2,7 @@ package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.RolRequest;
 import com.autonoma.dto.response.RolResponse;
+import com.autonoma.exception.ResourceNotFoundException;
 import com.autonoma.model.entity.Rol;
 import com.autonoma.repository.RolRepository;
 import com.autonoma.service.RolService;
@@ -26,7 +27,7 @@ public class RolServiceImpl implements RolService {
     @Override
     public RolResponse update(Integer id, RolRequest request) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no existe."));
         rol.setNombre(request.nombre());
         Rol updated = rolRepository.save(rol);
         return mapToResponse(updated);
@@ -43,7 +44,7 @@ public class RolServiceImpl implements RolService {
     @Override
     public RolResponse findById(Integer id) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no existe."));
         return mapToResponse(rol);
     }
 

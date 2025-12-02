@@ -2,11 +2,13 @@ package com.autonoma.model.entity;
 
 
 import com.autonoma.model.enums.Estado;
+import com.autonoma.model.enums.EstadoProducto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -28,31 +30,35 @@ public class Producto {
 
     private String talla;
 
-    private LocalDateTime fechaCreacion;
+    private BigDecimal precio;
 
+    @Column(unique = true)
     private String urlImg;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Estado estado;
+    private EstadoProducto estado;
+
+    @Column(name = "fecha_creacion", updatable = false)
+    private LocalDateTime fechaCreacion;
 
     @PrePersist
     public void prePersist() {
         this.fechaCreacion = LocalDateTime.now();
         if (this.estado == null) {
-            this.estado = Estado.ACTIVO;
+            this.estado = EstadoProducto.DISPONIBLE;
         }
         if (this.stock != null && this.stock <= 0) {
-            this.estado = Estado.INACTIVO;
+            this.estado =  EstadoProducto.AGOTADO;
         }
     }
 
     @PreUpdate
     public void preUpdate() {
         if (this.stock != null && this.stock <= 0) {
-            this.estado = Estado.INACTIVO;
+            this.estado = EstadoProducto.AGOTADO;
         } else {
-            this.estado = Estado.ACTIVO;
+            this.estado = EstadoProducto.DISPONIBLE;
         }
     }
 

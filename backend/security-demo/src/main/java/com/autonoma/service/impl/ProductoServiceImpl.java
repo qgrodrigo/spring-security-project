@@ -1,7 +1,10 @@
 package com.autonoma.service.impl;
 
 import com.autonoma.dto.request.ProductoRequest;
+import com.autonoma.dto.request.UpdateProductoRequest;
+import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.ProductoResponse;
+import com.autonoma.exception.ResourceNotFoundException;
 import com.autonoma.model.entity.Producto;
 import com.autonoma.repository.ProductoRepository;
 import com.autonoma.service.ProductoService;
@@ -19,19 +22,41 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository ProductoRepository;
 
     @Override
-    public ProductoResponse save(ProductoRequest request) {
+    public MessageResponse save(ProductoRequest request) {
+
+        String message;
+
         Producto Producto = mapToEntity(request);
         Producto saved = ProductoRepository.save(Producto);
-        return mapToResponse(saved);
+
+        if (saved == null){
+            message = "ERROR al guardar producto";
+        }else{
+            message = "EXITO: Producto registrado correctamente.";
+        }
+
+        MessageResponse messageResponse = new MessageResponse(message);
+
+        return messageResponse;
     }
 
     @Override
-    public ProductoResponse update(Integer id, ProductoRequest request) {
-        Producto Producto = ProductoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        Producto.setNombre(request.nombre());
-        Producto updated = ProductoRepository.save(Producto);
-        return mapToResponse(updated);
+    public MessageResponse update(Integer id, UpdateProductoRequest request) {
+        Producto producto = ProductoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no existe."));
+
+        producto.setNombre(request.nombre());
+        producto.setColor(request.color());
+        //producto.setStock(request.stock());
+        producto.setTalla(request.talla());
+        producto.setPrecio(request.precio());
+        producto.setUrlImg(request.urlImg());
+
+        Producto updated = ProductoRepository.save(producto);
+
+        MessageResponse messageResponse = new MessageResponse("EXITO: Producto actualizado correctamente.");
+
+        return messageResponse;
     }
 
     @Override
@@ -45,7 +70,8 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public ProductoResponse findById(Integer id) {
         Producto Producto = ProductoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no existe."));
+
         return mapToResponse(Producto);
     }
 
@@ -61,6 +87,7 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setStock(request.stock());
         producto.setColor(request.color());
         producto.setTalla(request.talla());
+        producto.setPrecio(request.precio());
         producto.setUrlImg(request.urlImg());
 
         return producto;
@@ -74,6 +101,7 @@ public class ProductoServiceImpl implements ProductoService {
                 producto.getStock(),
                 producto.getColor(),
                 producto.getTalla(),
+                producto.getPrecio(),
                 producto.getFechaCreacion().format(formatter),
                 producto.getUrlImg()
         );
