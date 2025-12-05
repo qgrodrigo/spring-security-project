@@ -10,7 +10,6 @@ INSERT INTO personal (
     celular,
     correo,
     urlimg,
-    estado,
     fecha_creacion
 ) VALUES (
     'Rodrigo',
@@ -20,7 +19,6 @@ INSERT INTO personal (
     '987654321',
     'rodrigo@example.com',
     'https://example.com/img/rodrigo.jpg',
-    'ACTIVO',
     NOW()
 );
 
@@ -43,16 +41,18 @@ INSERT INTO rol (nombre)
 VALUES (
 'BASIC'
 );
-INSERT INTO usuario (idpersonal, idrol, usuario, contraseña, estado)
+INSERT INTO usuario (idpersonal, idrol, usuario, contraseña, estado, intentos_fallidos)
 VALUES (
     1, -- id de un registro válido en la tabla personal
     1, -- id del rol ADMIN en la tabla rol
     'Rquispe',
     '$2a$12$UN7rgFfNo34bjyWOMs532.2Qf/CzrJ/EjyobSztsVvrWV47CV3uEq', -- BCrypt hash de "Admin123"
-    'ACTIVO'
+    'ACTIVO',
+    0
 );
 
 SELECT * FROM personal;
+SELECT * FROM producto;
 
 SELECT * FROM usuario
 -- SELECT * FROM rol

@@ -5,6 +5,7 @@ import com.autonoma.dto.request.UpdateProductoRequest;
 import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.ProductoResponse;
 import com.autonoma.service.ProductoService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,17 +34,20 @@ public class ProductoController{
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> saveProducto(@Valid @RequestBody ProductoRequest request) {
+    public ResponseEntity<MessageResponse> saveProducto(@Valid @RequestBody ProductoRequest request,
+                                                        HttpServletRequest httpRequest) {
 
-        MessageResponse message = productoService.save(request);
+        MessageResponse message = productoService.save(request, httpRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MessageResponse> updateProducto(@PathVariable Integer id,
-                                                 @RequestBody @Valid UpdateProductoRequest request) {
-        MessageResponse message = productoService.update(id, request);
+                                                         @RequestBody @Valid UpdateProductoRequest request,
+                                                          HttpServletRequest httpRequest) {
+
+        MessageResponse message = productoService.update(id, request, httpRequest);
         return ResponseEntity.ok(message);
     }
 

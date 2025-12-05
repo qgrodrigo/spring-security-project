@@ -9,6 +9,8 @@ import com.autonoma.repository.UsuarioRepository;
 import com.autonoma.security.JwtService;
 import com.autonoma.service.AuthService;
 import com.autonoma.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,8 +30,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        LoginResponse response = authService.login(request);
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request,
+                                               HttpServletRequest httpRequest) {
+
+        LoginResponse response = authService.login(request, httpRequest);
         return ResponseEntity.ok(response);
     }
 }

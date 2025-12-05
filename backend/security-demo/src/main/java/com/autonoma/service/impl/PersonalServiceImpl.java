@@ -40,6 +40,7 @@ public class PersonalServiceImpl implements PersonalService {
         usuario.setUsuario(usuarioHelperService.generarUsuario(personal));
         usuario.setContraseña(passwordEncoder.encode( usuarioHelperService.generarContraseña(personal)));
         usuario.setEstado(Estado.INACTIVO);
+        usuario.setIntentosFallidos(0);
 
         usuarioRepository.save(usuario);
 

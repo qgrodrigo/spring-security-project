@@ -99,10 +99,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
 
-        if(usuario.getEstado() != Estado.ACTIVO)
+        if(usuario.getEstado() == Estado.INACTIVO || usuario.getEstado() == Estado.BLOQUEADO)
         {
             usuario.setEstado(Estado.ACTIVO);
         }
+
 
         usuarioRepository.save(usuario);
 
@@ -176,6 +177,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setUsuario(generarUsuario(personal));
         usuario.setContraseña(passwordEncoder.encode(generarContraseña(personal)));
         usuario.setEstado(Estado.ACTIVO);
+        //usuario.setIntentosFallidos(0);
 
         return usuario;
     }
