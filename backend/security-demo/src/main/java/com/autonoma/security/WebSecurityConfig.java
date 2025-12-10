@@ -63,7 +63,8 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                                       .requestMatchers("/api/v1/login").permitAll()
+                        .requestMatchers("/api/v1/login").permitAll()
+                        .requestMatchers("/api/v1/otp/verificar").permitAll()
 
                         // Productos
                         .requestMatchers(HttpMethod.GET, "/api/v1/productos/**")

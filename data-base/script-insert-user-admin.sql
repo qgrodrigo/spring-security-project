@@ -12,12 +12,12 @@ INSERT INTO personal (
     urlimg,
     fecha_creacion
 ) VALUES (
-    'Rodrigo',
+    'Rodolfo',
     'García',
     'Pérez',
     '12345678',
     '987654321',
-    'rodrigo@example.com',
+    'rodrigo.quispe.gil@gmail.com', -- se tiene que ingresar correo válido para recibir el token
     'https://example.com/img/rodrigo.jpg',
     NOW()
 );
@@ -54,6 +54,9 @@ VALUES (
 SELECT * FROM personal;
 SELECT * FROM producto;
 
-SELECT * FROM usuario
+SELECT * FROM usuario;
+SELECT * FROM log_auth;
+SELECT * FROM log_PRODUCTO;
+SELECT * FROM PRODUCTO;
 -- SELECT * FROM rol
 -- Select * from usuario;

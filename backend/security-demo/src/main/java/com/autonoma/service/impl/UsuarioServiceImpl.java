@@ -143,12 +143,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public MessageResponse cambiarRol(Integer idPersonal, UpdateRolRequest request) {
+    public MessageResponse cambiarRol(Integer id, UpdateRolRequest request) {
 
-        Personal personal = personalRepository.findById(idPersonal)
-                .orElseThrow(() -> new ResourceNotFoundException("Personal no existe."));
+        //Personal personal = personalRepository.findById(id)
+        //        .orElseThrow(() -> new ResourceNotFoundException("Personal no existe."));
 
-        Usuario usuario = usuarioRepository.findById(idPersonal)
+        Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no existe."));
 
         Rol rol = rolRepository.findById(request.idRol())

@@ -7,5 +7,6 @@ public record LoginResponse(
         Integer idPersonal,
         String nombre,
         String apellido,
-        String rol
+        String rol,
+        String message
 ) {}

@@ -20,5 +20,5 @@ public interface UsuarioService {
     MessageResponse desactivarUsuario(Integer id);
     UserResponse showUsuario(Integer id);
 
-    MessageResponse cambiarRol(Integer idPersonal, UpdateRolRequest request);
+    MessageResponse cambiarRol(Integer id, UpdateRolRequest request);
 }
