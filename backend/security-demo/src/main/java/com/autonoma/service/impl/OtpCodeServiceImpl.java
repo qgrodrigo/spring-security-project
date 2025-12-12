@@ -18,11 +18,20 @@ public class OtpCodeServiceImpl implements OtpCodeService {
 
     @Override
     public OtpCode generateOtp(Integer userId) {
+
+
+
+        otpCodeRepository.findByUserIdAndUsedFalse(userId)
+                .forEach(code -> {
+                    code.setUsed(true);
+                    otpCodeRepository.save(code);
+                });
+
         String otp = OtpGenerator.generateOtp();
         OtpCode code = new OtpCode();
         code.setUserId(userId);
         code.setOtp(otp);
-        code.setExpiresAt(LocalDateTime.now().plusMinutes(5)); // expira en 5 min
+        code.setExpiresAt(LocalDateTime.now().plusMinutes(3)); // expira en 5 min
         code.setUsed(false);
         return otpCodeRepository.save(code);
     }

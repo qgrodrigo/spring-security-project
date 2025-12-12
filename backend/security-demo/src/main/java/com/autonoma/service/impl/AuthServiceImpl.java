@@ -35,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final EmailService emailService;
     private final PersonalService personalService;
 
+
     /*
     @Override
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
@@ -121,8 +122,11 @@ public class AuthServiceImpl implements AuthService {
             usuarioRepository.save(usuario);
 
 
-            // 🚀 Generar OTP y enviar al correo
+            // Generar OTP y enviar al correo
+            //if ()
+
             OtpCode otpCode = otpCodeService.generateOtp(usuario.getPersonal().getId());
+
             emailService.sendOtpEmail(usuario.getPersonal().getCorreo(), otpCode.getOtp());
 
             logAuthService.logAuth(usuario.getId(), request.usuario(), ip, TipoEventoLogin.LOGIN_SUCCESS);
@@ -144,10 +148,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponse verifyOtp(OtpVerifyRequest request) {
+    public LoginResponse verifyOtp(OtpVerifyRequest request, HttpServletRequest httpRequest) {
+
+        String ip = IpUtils.getClientIp(httpRequest);
+
         boolean valid = otpCodeService.validateOtp(request.idUsuario(), request.otp());
         if (!valid) {
+            logAuthService.logAuth(request.idUsuario(), "user", ip, TipoEventoLogin.VERIFY_OTP_FAILED);
             throw new CredencialesInvalidasException("OTP inválido o expirado.");
+            //logAuthService.logAuth(request.idUsuario(), , ip, TipoEventoLogin.VERIFY_OTP_SUCCES);
         }
 
         Usuario usuario = usuarioRepository.findById(request.idUsuario())
@@ -161,6 +170,9 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtService.generateToken(userDetails);
         long expiresIn = jwtService.getExpirationMinutes();
+
+        logAuthService.logAuth(usuario.getId(), usuario.getUsuario(), ip, TipoEventoLogin.VERIFY_OTP_SUCCES);
+
 
         return new LoginResponse(
                 token, expiresIn,

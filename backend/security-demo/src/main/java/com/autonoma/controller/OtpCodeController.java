@@ -8,6 +8,8 @@ import com.autonoma.model.entity.OtpCode;
 import com.autonoma.service.AuthService;
 import com.autonoma.service.EmailService;
 import com.autonoma.service.OtpCodeService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,8 +41,8 @@ public class OtpCodeController {
 
     // Endpoint para verificar OTP
     @PostMapping("/verificar")
-    public ResponseEntity<LoginResponse> verifyOtp(@RequestBody OtpVerifyRequest request) {
-        LoginResponse response = authService.verifyOtp(request);
+    public ResponseEntity<LoginResponse> verifyOtp(@RequestBody OtpVerifyRequest request, HttpServletRequest httpRequest) {
+        LoginResponse response = authService.verifyOtp(request, httpRequest);
 
         return ResponseEntity.ok(response);
     }

@@ -8,5 +8,5 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface AuthService {
     LoginResponse login(LoginRequest request, HttpServletRequest httpRequest);
 
-    LoginResponse verifyOtp(OtpVerifyRequest request);
+    LoginResponse verifyOtp(OtpVerifyRequest request, HttpServletRequest httpRequest);
 }
