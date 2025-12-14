@@ -1,1 +1,3 @@
 Here 'll be the frontend project
+
+git itś ok
