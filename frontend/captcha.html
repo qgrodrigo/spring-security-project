@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Validación reCAPTCHA v2</title>
+    <!-- Script oficial de Google reCAPTCHA v2 -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+    <h2>Validación reCAPTCHA</h2>
+
+    <form id="captchaForm">
+        <!-- Widget reCAPTCHA v2 -->
+        <div class="g-recaptcha" data-sitekey="6Ld4Ai0sAAAAAP8B4lxCY7pXqav3oc7XFh_pNC-c"></div>
+        <br>
+        <button type="button" onclick="submitCaptcha()">Validar Captcha</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+        function submitCaptcha() {
+            const token = document.querySelector('[name="g-recaptcha-response"]').value;
+
+            if (!token) {
+                document.getElementById("result").innerText = "Por favor completa el captcha.";
+                return;
+            }
+
+            fetch("http://localhost:8080/api/v1/captcha/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "g-recaptcha-response=" + encodeURIComponent(token)
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("result").innerText = "Respuesta del backend: " + data;
+            })
+            .catch(error => {
+                document.getElementById("result").innerText = "Error: " + error;
+            });
+        }
+    </script>
+</body>
+</html>

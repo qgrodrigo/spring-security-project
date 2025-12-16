@@ -25,12 +25,12 @@ public class SecurityDemoApplication implements CommandLineRunner {
     @Override
     @Async
     public void run(String... args) throws Exception {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("rodrigo.quispe.gil@gmail.com");
-        message.setSubject("Hola Mundo");
-        message.setText("Hola Mundo desde Spring Boot ");
+        //SimpleMailMessage message = new SimpleMailMessage();
+        //message.setTo("rodrigo.quispe.gil@gmail.com");
+        //message.setSubject("Hola Mundo");
+        //message.setText("Hola Mundo desde Spring Boot ");
 
-        mailSender.send(message);
+        //mailSender.send(message);
 
         System.out.println("Correo enviado con éxito!");
     }

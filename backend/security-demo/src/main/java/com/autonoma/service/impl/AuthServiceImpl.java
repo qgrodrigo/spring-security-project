@@ -36,69 +36,6 @@ public class AuthServiceImpl implements AuthService {
     private final PersonalService personalService;
 
 
-    /*
-    @Override
-    public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
-
-        String ip = IpUtils.getClientIp(httpRequest);
-
-        Usuario usuario = usuarioRepository.findByUsuario(request.usuario()).orElse(null);
-        if (usuario == null) {
-            logAuthService.logAuth(null, request.usuario(), ip, TipoEventoLogin.LOGIN_FAILED);
-            throw new UsuarioNoExisteException("Usuario no existe.");
-        }
-
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.usuario(), request.contraseña())
-            );
-
-            if (usuario.getEstado() == Estado.BLOQUEADO) {
-                throw new UsuarioBloqueadoException("Usuario bloqueado por múltiples intentos fallidos.");
-            }
-
-            if (usuario.getEstado() == Estado.INACTIVO) {
-                throw new UsuarioInactivoException("Usuario inactivo.");
-            }
-
-            usuario.setIntentosFallidos(0);
-            usuarioRepository.save(usuario);
-
-            String token = jwtService.generateToken((UserDetails) authentication.getPrincipal());
-            long expiresIn = jwtService.getExpirationMinutes();
-
-            logAuthService.logAuth(usuario.getId(), request.usuario(), ip, TipoEventoLogin.LOGIN_SUCCESS);
-
-            return new LoginResponse(
-                    token,
-                    expiresIn,
-                    usuario.getPersonal().getId(),
-                    usuario.getPersonal().getNombre(),
-                    usuario.getPersonal().getApellidoPaterno(),
-                    usuario.getRol().getNombre()
-            );
-
-        } catch (BadCredentialsException ex) {
-
-            int intentos = usuario.getIntentosFallidos() + 1;
-            usuario.setIntentosFallidos(intentos);
-
-            if (intentos >= 3) {
-                usuario.setEstado(Estado.BLOQUEADO);
-                usuarioRepository.save(usuario);
-
-                logAuthService.logAuth(usuario.getId(), request.usuario(), ip, TipoEventoLogin.LOGIN_FAILED);
-                throw new UsuarioBloqueadoException("Usuario bloqueado por múltiples intentos fallidos.");
-            }
-
-            usuarioRepository.save(usuario);
-
-            logAuthService.logAuth(usuario.getId(), request.usuario(), ip, TipoEventoLogin.LOGIN_FAILED);
-            throw new CredencialesInvalidasException("Usuario o contraseña incorrectos.");
-        }
-    }
-    */
-
     @Override
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
         String ip = IpUtils.getClientIp(httpRequest);
@@ -152,15 +89,23 @@ public class AuthServiceImpl implements AuthService {
 
         String ip = IpUtils.getClientIp(httpRequest);
 
-        boolean valid = otpCodeService.validateOtp(request.idUsuario(), request.otp());
-        if (!valid) {
-            logAuthService.logAuth(request.idUsuario(), "user", ip, TipoEventoLogin.VERIFY_OTP_FAILED);
-            throw new CredencialesInvalidasException("OTP inválido o expirado.");
-            //logAuthService.logAuth(request.idUsuario(), , ip, TipoEventoLogin.VERIFY_OTP_SUCCES);
-        }
-
         Usuario usuario = usuarioRepository.findById(request.idUsuario())
                 .orElseThrow(() -> new UsuarioNoExisteException("Usuario no existe."));
+
+        if(usuario.getEstado() == Estado.BLOQUEADO){
+            throw new UsuarioBloqueadoException("Usuario bloqueado.");
+        }
+
+        boolean valid = otpCodeService.validateOtp(request.idUsuario(), request.otp());
+        if (!valid) {
+            manejarIntentosFallidosOtp(usuario, ip);
+            logAuthService.logAuth(request.idUsuario(), usuario.getUsuario(), ip, TipoEventoLogin.VERIFY_OTP_FAILED);
+            throw new CredencialesInvalidasException("OTP inválido o expirado.");
+        }
+
+        // Resetear intentos fallidos al éxito
+        usuario.setIntentosFallidos(0);
+        usuarioRepository.save(usuario);
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                 .username(usuario.getUsuario())
@@ -168,11 +113,20 @@ public class AuthServiceImpl implements AuthService {
                 .roles(usuario.getRol().getNombre())
                 .build();
 
-        String token = jwtService.generateToken(userDetails);
+        //String token = jwtService.generateToken(userDetails);
         long expiresIn = jwtService.getExpirationMinutes();
+        //String jti = jwtService.extractJti(token);
+
+        String token = jwtService.generateToken(userDetails);
+        String jti = jwtService.extractJti(token);
+
+        usuario.setUltimoJti(jti);
+        usuarioRepository.save(usuario);
+
+        usuario.setUltimoJti(jti);
+        usuarioRepository.save(usuario);
 
         logAuthService.logAuth(usuario.getId(), usuario.getUsuario(), ip, TipoEventoLogin.VERIFY_OTP_SUCCES);
-
 
         return new LoginResponse(
                 token, expiresIn,
@@ -184,6 +138,40 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    @Override
+    public void logout(HttpServletRequest httpRequest) {
+        // Extraer el token del header
+        String authHeader = httpRequest.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Token no proporcionado");
+        }
+
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+        String jti = jwtService.extractJti(token);
+
+        Usuario usuario = usuarioRepository.findByUsuario(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Validar que el jti coincide con el último guardado
+        if (usuario.getUltimoJti() != null && usuario.getUltimoJti().equals(jti)) {
+            usuario.setUltimoJti(null); // invalidar
+            usuarioRepository.save(usuario);
+        } else {
+            throw new RuntimeException("Token inválido o ya cerrado");
+        }
+    }
+
+    private void manejarIntentosFallidosOtp(Usuario usuario, String ip) {
+        int intentos = usuario.getIntentosFallidos() + 1;
+        usuario.setIntentosFallidos(intentos);
+
+        if (intentos >= 3) {
+            usuario.setEstado(Estado.BLOQUEADO);
+        }
+        usuarioRepository.save(usuario);
+        logAuthService.logAuth(usuario.getId(), usuario.getUsuario(), ip, TipoEventoLogin.VERIFY_OTP_FAILED);
+    }
 
     private void manejarIntentosFallidos(Usuario usuario, String username, String ip) {
         int intentos = usuario.getIntentosFallidos() + 1;

@@ -38,4 +38,7 @@ public class Usuario {
     @Column(nullable = false)
     private Estado estado;
 
+    @Column(name = "ultimo_jti", length = 64)
+    private String ultimoJti;
+
 }

@@ -42,4 +42,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new MessageResponse("Credenciales inválidas: " + ex.getMessage()));
     }
+
+    @ExceptionHandler(SesionInvalidaException.class)
+    public ResponseEntity<Map<String, String>> handleSesionInvalida(SesionInvalidaException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
 }
