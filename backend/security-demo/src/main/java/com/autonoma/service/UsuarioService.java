@@ -5,6 +5,7 @@ import com.autonoma.dto.request.UsuarioRequest;
 import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.UserResponse;
 import com.autonoma.dto.response.UsuarioResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 

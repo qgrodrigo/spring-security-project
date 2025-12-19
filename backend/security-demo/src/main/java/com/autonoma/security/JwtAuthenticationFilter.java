@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,14 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String ip = request.getRemoteAddr();
 
-        // Bloqueo por IP si excedió el límite
-        if (!ipRateLimiter.tryConsume(ip)) {
-            response.setStatus(429);
+        if (!ipRateLimiter.tryConsume(ip, null, null)) {
+            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write("{\"error\":\"Demasiados intentos fallidos desde esta IP\"}");
             return;
         }
+
 
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 

@@ -11,10 +11,12 @@ import com.autonoma.model.entity.Usuario;
 import com.autonoma.model.enums.Estado;
 import com.autonoma.model.enums.TipoEventoLogin;
 import com.autonoma.repository.UsuarioRepository;
+import com.autonoma.security.IpRateLimiter;
 import com.autonoma.security.JwtService;
 import com.autonoma.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +38,17 @@ public class AuthServiceImpl implements AuthService {
     private final OtpCodeService otpCodeService;
     private final EmailService emailService;
     private final PersonalService personalService;
+    private final IpRateLimiter ipRateLimiter;
 
 
     @Override
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
         String ip = IpUtils.getClientIp(httpRequest);
+
+        // 🚫 Bloqueo por IP si excedió el límite
+        if (!ipRateLimiter.tryConsume(ip, null, request.usuario())) {
+            throw new UsuarioBloqueadoException("IP bloqueada por múltiples intentos fallidos.");
+        }
 
         Usuario usuario = usuarioRepository.findByUsuario(request.usuario())
                 .orElseThrow(() -> new UsuarioNoExisteException("Usuario no existe."));
@@ -66,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
             emailService.sendOtpEmail(usuario.getPersonal().getCorreo(), otpCode.getOtp());
 
-            logAuthService.logAuth(usuario.getId(), request.usuario(), ip, TipoEventoLogin.LOGIN_SUCCESS);
+            logAuthService.logAuth(usuario.getId(), request.usuario(), ip, TipoEventoLogin.LOGIN_SUCCESS, null, false, null);
 
             // Respuesta: login pendiente de verificación OTP
             return new LoginResponse(
@@ -87,19 +97,28 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse verifyOtp(OtpVerifyRequest request, HttpServletRequest httpRequest) {
 
+
         String ip = IpUtils.getClientIp(httpRequest);
 
         Usuario usuario = usuarioRepository.findById(request.idUsuario())
                 .orElseThrow(() -> new UsuarioNoExisteException("Usuario no existe."));
 
-        if(usuario.getEstado() == Estado.BLOQUEADO){
+        if (usuario.getEstado() == Estado.BLOQUEADO) {
             throw new UsuarioBloqueadoException("Usuario bloqueado.");
         }
 
         boolean valid = otpCodeService.validateOtp(request.idUsuario(), request.otp());
         if (!valid) {
             manejarIntentosFallidosOtp(usuario, ip);
-            logAuthService.logAuth(request.idUsuario(), usuario.getUsuario(), ip, TipoEventoLogin.VERIFY_OTP_FAILED);
+            logAuthService.logAuth(
+                    request.idUsuario(),
+                    usuario.getUsuario(),
+                    ip,
+                    TipoEventoLogin.VERIFY_OTP_FAILED,
+                    null,       // no hay token
+                    false,      // sesión no activa
+                    null        // sin expiración
+            );
             throw new CredencialesInvalidasException("OTP inválido o expirado.");
         }
 
@@ -113,21 +132,26 @@ public class AuthServiceImpl implements AuthService {
                 .roles(usuario.getRol().getNombre())
                 .build();
 
-        //String token = jwtService.generateToken(userDetails);
-        long expiresIn = jwtService.getExpirationMinutes();
-        //String jti = jwtService.extractJti(token);
-
+        // Generar JWT
         String token = jwtService.generateToken(userDetails);
         String jti = jwtService.extractJti(token);
+        long expiresIn = jwtService.getExpirationMinutes();
 
         usuario.setUltimoJti(jti);
         usuarioRepository.save(usuario);
 
-        usuario.setUltimoJti(jti);
-        usuarioRepository.save(usuario);
+        // Registrar sesión activa en log_auth
+        logAuthService.logAuth(
+                usuario.getId(),
+                usuario.getUsuario(),
+                ip,
+                TipoEventoLogin.VERIFY_OTP_SUCCES,
+                jti,                               // identificador del token
+                true,                              // sesión activa
+                LocalDateTime.now().plusMinutes(expiresIn) // expiración del token
+        );
 
-        logAuthService.logAuth(usuario.getId(), usuario.getUsuario(), ip, TipoEventoLogin.VERIFY_OTP_SUCCES);
-
+        // Respuesta final
         return new LoginResponse(
                 token, expiresIn,
                 usuario.getPersonal().getId(),
@@ -170,7 +194,16 @@ public class AuthServiceImpl implements AuthService {
             usuario.setEstado(Estado.BLOQUEADO);
         }
         usuarioRepository.save(usuario);
-        logAuthService.logAuth(usuario.getId(), usuario.getUsuario(), ip, TipoEventoLogin.VERIFY_OTP_FAILED);
+        logAuthService.logAuth(
+                usuario.getId(),
+                usuario.getUsuario(),
+                ip,
+                TipoEventoLogin.VERIFY_OTP_FAILED,
+                null,   // no hay token
+                false,  // sesión no activa
+                null    // sin expiración
+        );
+
     }
 
     private void manejarIntentosFallidos(Usuario usuario, String username, String ip) {
@@ -181,7 +214,16 @@ public class AuthServiceImpl implements AuthService {
             usuario.setEstado(Estado.BLOQUEADO);
         }
         usuarioRepository.save(usuario);
-        logAuthService.logAuth(usuario.getId(), username, ip, TipoEventoLogin.LOGIN_FAILED);
+
+        logAuthService.logAuth(
+                usuario.getId(),
+                username,
+                ip,
+                TipoEventoLogin.LOGIN_FAILED,
+                null,   // no hay token
+                false,  // sesión no activa
+                null    // sin expiración
+        );
     }
 
 }

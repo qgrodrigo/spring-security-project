@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
@@ -35,5 +36,13 @@ public class LogAuth {
 
     @Enumerated(EnumType.STRING)
     private TipoEventoLogin tipoEvento;
+
+    @Column(name = "token_id")
+    private String tokenId;
+
+    @Column(name = "active")
+    private Boolean active;
+
+    private LocalDateTime expirationTime;
 
 }

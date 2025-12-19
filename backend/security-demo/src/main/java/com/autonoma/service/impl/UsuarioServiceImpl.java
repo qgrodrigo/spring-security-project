@@ -7,19 +7,26 @@ import com.autonoma.dto.response.MessageResponse;
 import com.autonoma.dto.response.UserResponse;
 import com.autonoma.dto.response.UsuarioResponse;
 import com.autonoma.exception.ResourceNotFoundException;
+import com.autonoma.model.entity.LogAuth;
 import com.autonoma.model.entity.Personal;
 import com.autonoma.model.entity.Rol;
 import com.autonoma.model.entity.Usuario;
 import com.autonoma.model.enums.Estado;
+import com.autonoma.model.enums.TipoEventoLogin;
+import com.autonoma.repository.LogAuthRepository;
 import com.autonoma.repository.PersonalRepository;
 import com.autonoma.repository.RolRepository;
 import com.autonoma.repository.UsuarioRepository;
+import com.autonoma.security.IpRateLimiter;
+import com.autonoma.service.LogAuthService;
 import com.autonoma.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +36,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final PersonalRepository personalRepository;
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IpRateLimiter ipRateLimiter;
+    private final LogAuthRepository logAuthRepository;
+    private final LogAuthService logAuthService;
 
 
     @Override
@@ -111,6 +121,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return messageResponse;
     }
+
 
     @Override
     public MessageResponse desactivarUsuario(Integer id) {
